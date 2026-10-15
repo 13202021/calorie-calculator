@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Калькулятор BMR и TDEE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#ee3158;--pink-light:#fff0f3;--ink:#23222a;--muted:#7d7a85;--line:#f0e5e9}
+*{box-sizing:border-box}html{color-scheme:light}body{font-family:'Montserrat',Arial,sans-serif;font-weight:400;background:#fff;color:var(--ink);margin:0;padding:14px}
+.card{max-width:700px;margin:auto;background:#fff;border:1px solid #f3e8ec;border-radius:20px;padding:28px;box-shadow:0 8px 32px rgba(173,45,82,.055)}
+h2{font-size:22px;line-height:1.4;font-weight:700;margin:0 0 7px}p.sub{font-size:13px;color:var(--muted);margin:0 0 27px}
+.field{margin-bottom:24px}.head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;font-size:14px;font-weight:600}.value{color:var(--pink);font-weight:700}
+input[type=range]{width:100%;accent-color:var(--pink);cursor:pointer}.gender{display:flex;gap:8px}.gender label{flex:1;display:block;text-align:center;padding:13px 8px;border-radius:11px;background:#faf5f7;cursor:pointer;font-size:13px;transition:.2s}
+.gender input{position:absolute;opacity:0}.gender input:checked+label{background:var(--pink);color:#fff}.gender input:focus-visible+label{outline:3px solid #f9a5b8;outline-offset:2px}
+.activities{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.activities label{padding:14px 12px;border:1px solid var(--line);background:#fff9fa;border-radius:12px;cursor:pointer;display:flex;gap:9px;align-items:center;font-size:12px;line-height:1.5;transition:.2s}
+.activities label:hover{border-color:#f4a2b4}.activities label:has(input:checked){background:var(--pink-light);border-color:var(--pink)}.activities input{accent-color:var(--pink);flex:none}
+.results{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}.result{background:var(--pink-light);padding:23px 10px;text-align:center;border-radius:14px}.result:last-child{background:#fff0f3}.result span{font-size:12px;color:#66616c}.result strong{display:block;font-size:36px;color:var(--pink);font-weight:700;margin:10px 0 4px}
+.note{font-size:12px;line-height:1.7;color:#77727d;background:#fff8fa;border-radius:12px;padding:15px;margin:18px 0 0}
+@media(max-width:480px){body{padding:6px}.card{padding:18px;border-radius:14px}h2{font-size:19px}.activities{grid-template-columns:1fr}.result strong{font-size:28px}.result span{font-size:11px}}
+</style>
+</head>
+<body>
+<div class="card">
+<h2>🧮 Расчёт BMR и суточных энергозатрат</h2><p class="sub">Интерактивный калькулятор калорийности</p>
+<div class="field"><div class="head">Формула</div><div class="gender"><input type="radio" name="sex" value="m" id="m" checked><label for="m">Для мужчин</label><input type="radio" name="sex" value="f" id="f"><label for="f">Для женщин</label></div></div>
+<div class="field"><div class="head"><label for="age">Возраст</label><span class="value" id="av">25 лет</span></div><input id="age" type="range" min="18" max="75" value="25"></div>
+<div class="field"><div class="head"><label for="mass">Масса тела</label><span class="value" id="mv">75 кг</span></div><input id="mass" type="range" min="40" max="140" value="75"></div>
+<div class="field"><div class="head"><label for="height">Рост</label><span class="value" id="hv">175 см</span></div><input id="height" type="range" min="140" max="210" value="175"></div>
+<div class="field"><div class="head">Физическая активность</div><div class="activities">
+<label><input type="radio" name="activity" value="1.2">Низкая — 1,2</label>
+<label><input type="radio" name="activity" value="1.375">Небольшая — 1,375</label>
+<label><input type="radio" name="activity" value="1.55" checked>Умеренная — 1,55</label>
+<label><input type="radio" name="activity" value="1.725">Высокая — 1,725</label>
+<label><input type="radio" name="activity" value="1.9">Очень высокая — 1,9</label>
+</div></div>
+<div class="results"><div class="result"><span>Основной обмен</span><strong id="bmr">1724</strong><span>ккал/сутки</span></div><div class="result"><span>Общие энергозатраты</span><strong id="tdee">2672</strong><span>ккал/сутки</span></div></div>
+<p class="note">ℹ️ Расчёт предназначен для ориентировочной оценки у взрослых. Он не заменяет индивидуальную оценку при заболеваниях, беременности, интенсивной спортивной подготовке или нарушениях пищевого поведения.</p>
+</div>
+<script>
+const age=document.getElementById('age'),mass=document.getElementById('mass'),height=document.getElementById('height');
+function update(){const a=+age.value,m=+mass.value,h=+height.value,sex=document.querySelector('input[name=sex]:checked').value,pal=+document.querySelector('input[name=activity]:checked').value;const bmr=10*m+6.25*h-5*a+(sex==='m'?5:-161);document.getElementById('av').textContent=a+' лет';document.getElementById('mv').textContent=m+' кг';document.getElementById('hv').textContent=h+' см';document.getElementById('bmr').textContent=Math.round(bmr);document.getElementById('tdee').textContent=Math.round(bmr*pal)}
+document.querySelectorAll('input').forEach(el=>el.addEventListener('input',update));update();
+</script>
+</body></html>
